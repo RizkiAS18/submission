@@ -1,5 +1,6 @@
 package com.example.githubuserapp.ui.follow
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,6 +21,7 @@ class FollowViewModel : ViewModel() {
     val error : LiveData<Boolean> = _error
 
     fun getUserFollower(username:String){
+        Log.d("usernameVM", "getUserFollower: $username")
         _isLoading.value = true
         val client = ApiConfig.getApiService().getUserFollowers(username)
         client.enqueue(object : Callback<List<UserResponse>>{
@@ -29,6 +31,7 @@ class FollowViewModel : ViewModel() {
             ) {
                 _isLoading.value = false
                 _listFollow.value = response.body()
+                Log.d("usernameVM", "getUserFollower: ${response.body()}")
             }
 
             override fun onFailure(call: Call<List<UserResponse>>, t: Throwable) {

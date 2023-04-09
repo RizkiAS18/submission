@@ -1,6 +1,7 @@
 package com.example.githubuserapp.ui.follow
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -18,24 +19,31 @@ class FollowFragment : Fragment() {
         const val TAB_TITLES = "tab_titles"
         const val GIT_FOLLOWER = "Followers"
         const val GIT_FOLLOWING = "Following"
+        var USERNAME = "username"
     }
 
-    private lateinit var binding: FragmentFollowBinding
+    private var _binding: FragmentFollowBinding? = null
+    private val binding get() = _binding!!
     private lateinit var viewModel: FollowViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFollowBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[FollowViewModel::class.java]
+        _binding = FragmentFollowBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        val userFollow = requireActivity().intent.getStringExtra(DetailActivity.EXTRA_FAVORITE)
-
-        binding.rvFollow.layoutManager = LinearLayoutManager(activity)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(this)[FollowViewModel::class.java]
+        val userFollow = arguments?.getString(USERNAME)
+        Log.d("userfollow", "onViewCreated: $userFollow")
         val userTab = arguments?.getString(TAB_TITLES)
         if (userTab == GIT_FOLLOWER){
-            userFollow?.let { viewModel.getUserFollower(it) }
+            userFollow?.let {
+                viewModel.getUserFollower(it)
+            }
         }else if (userTab == GIT_FOLLOWING){
             userFollow?.let { viewModel.getUserFollowing(it) }
         }
@@ -46,6 +54,7 @@ class FollowFragment : Fragment() {
 
         viewModel.listFollow.observe(viewLifecycleOwner){
             val adapter = FollowAdapter(it)
+            binding.rvFollow.layoutManager = LinearLayoutManager(activity)
             binding.rvFollow.adapter = adapter
         }
 
@@ -53,7 +62,6 @@ class FollowFragment : Fragment() {
             Toast.makeText(context, "Data Not Found", Toast.LENGTH_SHORT).show()
             viewModel.doneToastError()
         }
-        return binding.root
     }
 
     private fun showLoading(isLoading: Boolean) {

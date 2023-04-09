@@ -23,6 +23,7 @@ class SectionPagerAdapter(activity: AppCompatActivity):FragmentStateAdapter(acti
         }
         fragment.arguments = Bundle().apply {
             putString(FollowFragment.TAB_TITLES, gitTabs)
+            putString(FollowFragment.USERNAME, username)
         }
         return fragment
     }

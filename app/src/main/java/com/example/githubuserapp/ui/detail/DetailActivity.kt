@@ -28,6 +28,8 @@ class DetailActivity : AppCompatActivity() {
     private var favoriteUser: User? = null
     private var detailUser = UserResponse()
 
+    private var username: String = ""
+
     companion object{
         const val EXTRA_FAVORITE = "extra_favorite"
         @StringRes
@@ -47,7 +49,10 @@ class DetailActivity : AppCompatActivity() {
         println("Print ${MainActivity.EXTRA_DATA}")
 
         if (user != null){
-            user.login?.let { viewModel.getDetailUser(it) }
+            user.login?.let {
+                viewModel.getDetailUser(it)
+                username= it
+            }
         }
 
         viewModel.listUser.observe(this){detailList ->
@@ -96,6 +101,7 @@ class DetailActivity : AppCompatActivity() {
             val sectionPagerAdapter = SectionPagerAdapter(this)
             val viewPager: ViewPager2 = findViewById(R.id.view_pager)
             viewPager.adapter = sectionPagerAdapter
+            sectionPagerAdapter.username = username
             val tabs : TabLayout = findViewById(R.id.tabs)
             TabLayoutMediator(tabs, viewPager){ detailTabs, position ->
                 detailTabs.text = resources.getString(GIT_TABS[position])
